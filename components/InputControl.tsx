@@ -8,6 +8,7 @@ interface InputControlProps {
   min?: number;
   placeholder?: string;
   error?: string;
+  icon?: React.ReactNode;
 }
 
 export const InputControl: React.FC<InputControlProps> = ({
@@ -17,7 +18,8 @@ export const InputControl: React.FC<InputControlProps> = ({
   unit,
   min = 0,
   placeholder,
-  error
+  error,
+  icon
 }) => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
@@ -32,8 +34,14 @@ export const InputControl: React.FC<InputControlProps> = ({
   };
 
   return (
-    <div className="flex flex-col gap-1 w-full">
-      <label className="text-sm font-semibold text-slate-600">{label}</label>
+    <div className="w-full group">
+      <div className="flex items-center justify-between mb-2">
+        <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide flex items-center gap-2">
+          {icon && <span className="text-slate-400">{icon}</span>}
+          {label}
+        </label>
+      </div>
+      
       <div className="relative">
         <input
           type="number"
@@ -42,17 +50,24 @@ export const InputControl: React.FC<InputControlProps> = ({
           value={value}
           onChange={handleChange}
           placeholder={placeholder}
-          className={`w-full p-3 pr-12 border rounded-lg focus:ring-2 focus:outline-none transition-all shadow-sm ${
-            error 
-              ? 'border-red-400 focus:ring-red-200 bg-red-50' 
-              : 'border-slate-300 focus:ring-blue-200 focus:border-blue-500'
-          }`}
+          className={`
+            w-full bg-slate-50 text-slate-800 text-lg font-medium p-4 pr-12 rounded-xl border-2 transition-all outline-none placeholder:text-slate-300
+            ${error 
+              ? 'border-red-100 bg-red-50/50 focus:border-red-400' 
+              : 'border-transparent hover:border-slate-200 focus:border-slate-900 focus:bg-white'
+            }
+          `}
         />
-        <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 font-medium select-none">
+        <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-semibold pointer-events-none">
           {unit}
         </span>
       </div>
-      {error && <span className="text-xs text-red-500 font-medium">{error}</span>}
+      
+      {error && (
+        <div className="mt-2 text-xs text-red-500 font-medium flex items-center gap-1 animate-pulse">
+          • {error}
+        </div>
+      )}
     </div>
   );
 };

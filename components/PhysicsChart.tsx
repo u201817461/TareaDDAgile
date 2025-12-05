@@ -8,7 +8,8 @@ import {
   Tooltip,
   ResponsiveContainer,
   ReferenceDot,
-  Label
+  Area,
+  AreaChart
 } from 'recharts';
 
 interface PhysicsChartProps {
@@ -19,15 +20,13 @@ interface PhysicsChartProps {
 
 export const PhysicsChart: React.FC<PhysicsChartProps> = ({ distance, time, currentVelocity }) => {
   // Generate data points for Velocity vs Time (fixing Distance)
-  // Logic: v = d / t. We want to show how varying time affects velocity.
   const chartData = useMemo(() => {
     if (distance <= 0 || time <= 0) return [];
 
     const points = [];
-    // Generate range from 0.5 * time to 2.0 * time
     const startT = Math.max(0.1, time * 0.2);
     const endT = time * 2.5;
-    const steps = 30;
+    const steps = 40; // Increased steps for smoother curve
     const stepSize = (endT - startT) / steps;
 
     for (let i = 0; i <= steps; i++) {
@@ -42,49 +41,65 @@ export const PhysicsChart: React.FC<PhysicsChartProps> = ({ distance, time, curr
     return points;
   }, [distance, time]);
 
-  if (distance <= 0 || time <= 0) {
-    return (
-      <div className="h-64 flex items-center justify-center text-slate-400 bg-slate-50 rounded-lg border border-dashed border-slate-300">
-        Ingresa valores válidos para ver la gráfica
-      </div>
-    );
-  }
+  if (distance <= 0 || time <= 0) return null;
 
   return (
-    <div className="w-full h-80 bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-      <h3 className="text-sm font-semibold text-slate-700 mb-4 text-center">
-        Relación Velocidad vs. Tiempo (Distancia Constante: {distance}m)
-      </h3>
+    <div className="w-full h-[320px]">
       <ResponsiveContainer width="100%" height="100%">
-        <LineChart data={chartData} margin={{ top: 10, right: 30, left: 0, bottom: 20 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+        <AreaChart data={chartData} margin={{ top: 20, right: 20, left: -20, bottom: 0 }}>
+          <defs>
+            <linearGradient id="colorVelocity" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor="#0f172a" stopOpacity={0.1}/>
+              <stop offset="95%" stopColor="#0f172a" stopOpacity={0}/>
+            </linearGradient>
+          </defs>
+          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
           <XAxis 
             dataKey="time" 
-            label={{ value: 'Tiempo (s)', position: 'insideBottom', offset: -10, fill: '#64748b' }} 
-            tick={{ fill: '#64748b', fontSize: 12 }}
+            tickLine={false}
+            axisLine={false}
+            tick={{ fill: '#94a3b8', fontSize: 11 }}
+            dy={10}
+            label={{ value: 'Tiempo (s)', position: 'insideBottom', offset: -5, fill: '#94a3b8', fontSize: 11 }} 
           />
           <YAxis 
-            label={{ value: 'Velocidad (m/s)', angle: -90, position: 'insideLeft', fill: '#64748b' }} 
-            tick={{ fill: '#64748b', fontSize: 12 }}
+            tickLine={false}
+            axisLine={false}
+            tick={{ fill: '#94a3b8', fontSize: 11 }}
+            label={{ value: 'Velocidad (m/s)', angle: -90, position: 'insideLeft', fill: '#94a3b8', fontSize: 11, dx: 10 }} 
           />
           <Tooltip 
-            contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+            cursor={{ stroke: '#cbd5e1', strokeWidth: 1, strokeDasharray: '4 4' }}
+            contentStyle={{ 
+              backgroundColor: '#1e293b', 
+              border: 'none', 
+              borderRadius: '8px',
+              color: '#fff',
+              fontSize: '12px',
+              padding: '8px 12px'
+            }}
+            itemStyle={{ color: '#fff' }}
             formatter={(value: number) => [`${value} m/s`, 'Velocidad']}
-            labelFormatter={(label) => `Tiempo: ${parseFloat(label).toFixed(2)} s`}
+            labelFormatter={(label) => `t = ${parseFloat(label).toFixed(2)}s`}
           />
-          <Line 
+          <Area 
             type="monotone" 
             dataKey="velocity" 
-            stroke="#3b82f6" 
-            strokeWidth={3} 
-            dot={false} 
-            activeDot={{ r: 6 }} 
+            stroke="#0f172a" 
+            strokeWidth={2} 
+            fillOpacity={1} 
+            fill="url(#colorVelocity)" 
           />
-          {/* Highlight the current calculated point */}
-          <ReferenceDot x={time} y={currentVelocity} r={6} fill="#ef4444" stroke="#fff" strokeWidth={2}>
-             <Label value="Tu resultado" position="top" fill="#ef4444" fontSize={12} fontWeight="bold" />
-          </ReferenceDot>
-        </LineChart>
+          
+          <ReferenceDot 
+            x={time} 
+            y={currentVelocity} 
+            r={5} 
+            fill="#fff" 
+            stroke="#0f172a" 
+            strokeWidth={3} 
+          />
+        </AreaChart>
       </ResponsiveContainer>
     </div>
   );
