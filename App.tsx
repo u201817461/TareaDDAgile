@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { InputControl } from './components/InputControl';
 import { PhysicsChart } from './components/PhysicsChart';
-import { Activity, ArrowRight, RotateCcw, Timer, Ruler } from 'lucide-react';
+import { Activity, ArrowRight, RotateCcw, Timer, Ruler, MoveRight } from 'lucide-react';
 
 const App: React.FC = () => {
   const [distance, setDistance] = useState<number | ''>('');
@@ -53,18 +53,20 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#fafafa] text-slate-800 font-sans selection:bg-slate-200">
+    <div className="min-h-screen bg-[#fafafa] text-slate-800 font-sans">
       
       {/* Navbar / Header */}
-      <nav className="w-full bg-white border-b border-slate-100 py-4 px-6 mb-8 flex justify-between items-center sticky top-0 z-10">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-slate-900 text-white rounded-lg flex items-center justify-center">
-            <Activity size={18} />
+      <nav className="w-full bg-white/80 backdrop-blur-sm border-b border-slate-100 py-4 px-6 mb-8 sticky top-0 z-20">
+        <div className="max-w-6xl mx-auto flex justify-between items-center">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 bg-slate-900 text-white rounded-lg flex items-center justify-center shadow-md shadow-slate-200">
+              <Activity size={18} strokeWidth={2.5} />
+            </div>
+            <h1 className="text-lg font-bold tracking-tight text-slate-900">Simulador MRU</h1>
           </div>
-          <h1 className="text-lg font-bold tracking-tight text-slate-900">Simulador MRU</h1>
-        </div>
-        <div className="text-xs font-medium text-slate-400 bg-slate-50 px-3 py-1 rounded-full border border-slate-100">
-          Cinemática
+          <div className="text-[10px] font-bold tracking-widest text-slate-400 uppercase bg-slate-50 px-3 py-1.5 rounded-full border border-slate-100">
+            Cinemática
+          </div>
         </div>
       </nav>
 
@@ -75,57 +77,59 @@ const App: React.FC = () => {
           <div className="lg:col-span-4 space-y-6">
             
             {/* Main Control Card */}
-            <div className="bg-white rounded-2xl p-6 shadow-[0_2px_20px_-8px_rgba(0,0,0,0.05)] border border-slate-100">
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-sm font-semibold text-slate-400 uppercase tracking-wider">Parámetros</h2>
+            <div className="bg-white rounded-2xl p-6 shadow-[0_4px_24px_-12px_rgba(0,0,0,0.05)] border border-slate-100/50">
+              <div className="flex justify-between items-center mb-8">
+                <h2 className="text-xs font-bold text-slate-400 uppercase tracking-widest">Parámetros de Entrada</h2>
                 <button 
                   onClick={handleReset}
-                  className="p-2 text-slate-400 hover:text-slate-700 hover:bg-slate-50 rounded-full transition-all"
-                  title="Reiniciar"
+                  className="p-2 text-slate-300 hover:text-slate-600 hover:bg-slate-50 rounded-full transition-all duration-300"
+                  title="Reiniciar cálculo"
                 >
-                  <RotateCcw size={16} />
+                  <RotateCcw size={14} strokeWidth={2.5} />
                 </button>
               </div>
               
               <div className="space-y-8">
                 <InputControl 
-                  label="Distancia" 
+                  label="Distancia (d)" 
                   unit="m" 
                   value={distance} 
                   onChange={setDistance}
                   placeholder="0.00"
                   error={distanceError}
-                  icon={<Ruler size={16} />}
+                  icon={<Ruler size={14} />}
                 />
                 
-                <div className="relative flex justify-center">
-                  <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t border-slate-50"></div>
-                  </div>
+                {/* Visual Connector */}
+                <div className="relative h-4 flex items-center justify-center">
+                  <div className="absolute w-[1px] h-8 bg-slate-100 top-[-16px]"></div>
                 </div>
 
                 <InputControl 
-                  label="Tiempo" 
+                  label="Tiempo (t)" 
                   unit="s" 
                   value={time} 
                   onChange={setTime}
                   placeholder="0.00"
                   error={timeError}
-                  icon={<Timer size={16} />}
+                  icon={<Timer size={14} />}
                 />
               </div>
             </div>
 
-            {/* Formula Reference */}
-            <div className="bg-slate-900 rounded-2xl p-6 text-white shadow-lg relative overflow-hidden group">
-               <div className="absolute -right-6 -top-6 w-24 h-24 bg-white/5 rounded-full blur-2xl group-hover:bg-white/10 transition-all"></div>
-               <h3 className="text-slate-400 text-xs font-medium uppercase tracking-widest mb-4">Fórmula Base</h3>
-               <div className="flex items-center justify-between">
-                 <div className="text-4xl font-light font-serif italic">v = d / t</div>
-                 <div className="text-right space-y-1">
-                   <div className="text-xs text-slate-400"><span className="text-white font-bold">v</span> · velocidad</div>
-                   <div className="text-xs text-slate-400"><span className="text-white font-bold">d</span> · distancia</div>
-                   <div className="text-xs text-slate-400"><span className="text-white font-bold">t</span> · tiempo</div>
+            {/* Formula Reference - Minimalist Light Version */}
+            <div className="bg-white rounded-2xl p-6 border border-slate-200/60 flex flex-col items-center justify-center text-center relative overflow-hidden">
+               <div className="absolute top-0 right-0 p-4 opacity-5">
+                 <MoveRight size={64} />
+               </div>
+               <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Fórmula</h3>
+               <div className="flex items-center gap-4 text-3xl font-serif italic text-slate-800">
+                 <span>v</span>
+                 <span className="text-slate-300 text-2xl">=</span>
+                 <div className="flex flex-col items-center leading-none">
+                   <span>d</span>
+                   <div className="w-full h-[1px] bg-slate-800 my-1"></div>
+                   <span>t</span>
                  </div>
                </div>
             </div>
@@ -136,52 +140,61 @@ const App: React.FC = () => {
           <div className="lg:col-span-8 space-y-6">
             
             {/* Result Header */}
-            <div className="bg-white rounded-2xl p-8 shadow-[0_2px_20px_-8px_rgba(0,0,0,0.05)] border border-slate-100 flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="bg-white rounded-2xl p-8 shadow-[0_4px_24px_-12px_rgba(0,0,0,0.05)] border border-slate-100/50 flex flex-col md:flex-row items-center justify-between gap-6 transition-all duration-500">
               <div>
-                <span className="block text-sm font-semibold text-slate-400 uppercase tracking-wider mb-1">Velocidad Resultante</span>
+                <span className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Velocidad Resultante</span>
                 <div className="flex items-baseline gap-2">
                    {velocity !== null ? (
                      <>
-                      <span className="text-6xl md:text-7xl font-light text-slate-900 tracking-tighter">
+                      <span className="text-6xl md:text-7xl font-light text-slate-900 tracking-tighter tabular-nums">
                         {velocity.toFixed(2)}
                       </span>
                       <span className="text-xl text-slate-400 font-medium">m/s</span>
                      </>
                    ) : (
-                     <span className="text-6xl md:text-7xl font-light text-slate-200 tracking-tighter">--</span>
+                     <span className="text-6xl md:text-7xl font-light text-slate-200 tracking-tighter select-none">--</span>
                    )}
                 </div>
               </div>
 
               {/* Secondary Units */}
               {velocity !== null && (
-                <div className="flex gap-4 md:gap-8 border-t md:border-t-0 md:border-l border-slate-100 pt-4 md:pt-0 md:pl-8 w-full md:w-auto mt-2 md:mt-0">
+                <div className="flex gap-8 border-t md:border-t-0 md:border-l border-slate-100 pt-6 md:pt-0 md:pl-8 w-full md:w-auto mt-2 md:mt-0 animate-in fade-in slide-in-from-bottom-2 duration-500">
                   <div>
-                    <span className="block text-xs text-slate-400 font-medium mb-1">Km/h</span>
-                    <span className="text-2xl font-semibold text-slate-700">{(velocity * 3.6).toFixed(1)}</span>
+                    <span className="block text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">Kilómetros por hora</span>
+                    <span className="text-2xl font-semibold text-slate-700 tabular-nums">{(velocity * 3.6).toFixed(1)} <span className="text-sm font-normal text-slate-400">km/h</span></span>
                   </div>
                   <div>
-                    <span className="block text-xs text-slate-400 font-medium mb-1">Ritmo (min/km)</span>
-                    <span className="text-2xl font-semibold text-slate-700">{(velocity > 0 ? (1000/velocity/60).toFixed(1) : 0)}</span>
+                    <span className="block text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">Ritmo</span>
+                    <span className="text-2xl font-semibold text-slate-700 tabular-nums">{(velocity > 0 ? (1000/velocity/60).toFixed(1) : 0)} <span className="text-sm font-normal text-slate-400">min/km</span></span>
                   </div>
                 </div>
               )}
             </div>
 
             {/* Chart Container */}
-            <div className="bg-white rounded-2xl p-6 shadow-[0_2px_20px_-8px_rgba(0,0,0,0.05)] border border-slate-100 min-h-[400px] flex flex-col">
-              <div className="flex items-center gap-2 mb-6">
-                <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
-                <h3 className="text-sm font-semibold text-slate-800">Proyección Gráfica</h3>
+            <div className="bg-white rounded-2xl p-6 shadow-[0_4px_24px_-12px_rgba(0,0,0,0.05)] border border-slate-100/50 min-h-[420px] flex flex-col">
+              <div className="flex items-center justify-between mb-8">
+                <div className="flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 rounded-full bg-slate-900"></div>
+                  <h3 className="text-xs font-bold text-slate-800 uppercase tracking-widest">Gráfica Velocidad / Tiempo</h3>
+                </div>
+                {velocity !== null && (
+                  <div className="text-xs font-medium text-emerald-600 bg-emerald-50 px-2 py-1 rounded">
+                    d = {Number(distance)}m constante
+                  </div>
+                )}
               </div>
               
-              <div className="flex-1 w-full">
+              <div className="flex-1 w-full relative">
                 {velocity !== null ? (
                   <PhysicsChart distance={Number(distance)} time={Number(time)} currentVelocity={velocity} />
                 ) : (
-                  <div className="h-full w-full flex flex-col items-center justify-center text-slate-300 gap-4 min-h-[300px]">
-                    <ArrowRight className="w-8 h-8 opacity-20" />
-                    <p className="text-sm font-medium">Introduce valores para generar la gráfica</p>
+                  <div className="absolute inset-0 flex flex-col items-center justify-center text-slate-300 gap-4">
+                    <div className="w-16 h-16 rounded-full bg-slate-50 flex items-center justify-center">
+                      <ArrowRight className="w-6 h-6 opacity-30" />
+                    </div>
+                    <p className="text-sm font-medium">Introduce valores para visualizar la curva</p>
                   </div>
                 )}
               </div>
